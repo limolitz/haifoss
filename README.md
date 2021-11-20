@@ -8,17 +8,53 @@ The project is split up into two main parts. The client, written in Micropython,
 
 Since drawing every pixel is incredibly slow, the image is read line by line and coverted into line drawing operations, which are way faster. On the device, we then loop through every row and draw all lines in this column. Note that empty lines carry meaning in this file format (that there is no black pixel in this line).
 
-## Snippets
+## Installation
 
-Copy a file
-
+Clone the repo, and get the submodule:
 ```Bash
-python3 pyboard.py --device /dev/ttyUSB0 -f cp ../haifoss/config.json :
+git clone https://github.com/wasmitnetzen/haifoss.git
+git submodule init
+git submodule update
 ```
 
-Manually run the tool:
+Make a `venv` and install the requirements:
 
 ```Bash
-python3 pyboard.py --device /dev/ttyUSB0 ../haifoss/main.py
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
+Convert a file (default filename is `tab1.bmp`):
+```Bash
+./convert.py
+```
+
+Configure a webserver (e.g. Nginx, Apache) to deliver it.
+
+Copy the needed files to the Inkplate
+
+```Bash
+make copy
+```
+
+or
+
+```Bash
+python3 ./Inkplate-micropython/pyboard.py --device /dev/ttyUSB0 -f cp config.json screen.py ./Inkplate-micropython/inkplate10.py :
+```
+
+Lauch the client on the Inkplate:
+
+```Bash
+make run
+```
+or
+
+```Bash
+python3 ./Inkplate-micropython/pyboard.py --device /dev/ttyUSB0 screen.py
+```
+
+## TODO
+
+* Document autostart

@@ -1,0 +1,3 @@
+[submodule "Inkplate-micropython"]
+	path = Inkplate-micropython
+	url = https://github.com/e-radionicacom/Inkplate-micropython.git
