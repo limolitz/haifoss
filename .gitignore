@@ -1,2 +1,5 @@
 config.json
 venv/
+*.bmp
+*.svg
+tab1.txt
