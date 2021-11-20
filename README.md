@@ -32,6 +32,8 @@ Convert a file (default filename is `tab1.bmp`):
 
 Configure a webserver (e.g. Nginx, Apache) to deliver it.
 
+Adjust the `config.json` from the sample with your Wifi and webserver data.
+
 Copy the needed files to the Inkplate
 
 ```Bash
