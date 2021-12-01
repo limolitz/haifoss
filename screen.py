@@ -3,6 +3,7 @@ import time
 import ntptime
 import socket
 import json
+import sys
 
 from inkplate10 import Inkplate
 
@@ -25,6 +26,7 @@ class Haifoss:
     def __init__(self):
         self.display = Inkplate(Inkplate.INKPLATE_1BIT)
         self.display.begin()
+        self.display.clearDisplay()
         self.display.setRotation(3)
 
     def read_config(self):
@@ -37,7 +39,7 @@ class Haifoss:
         return self.config[key]
 
     def init_screen(self):
-        self.display.drawFastHLine(0, self.display.height() - 15, self.display.width(), self.display.BLACK)
+        self.display.clearDisplay()
 
     def fill(self, number):
         if number < 10:
@@ -46,7 +48,8 @@ class Haifoss:
 
     def get_time_str(self, seconds):
         year, month, mday, hour, minute, second, weekday, yearday = time.localtime(seconds)
-        return str(year)+"-"+self.fill(month)+"-"+self.fill(mday)+" "+self.fill(hour)+":"+self.fill(minute)+":"+self.fill(second)
+        return str(year)+"-"+self.fill(month)+"-"+self.fill(mday)+" " \
+            + self.fill(hour)+":"+self.fill(minute)+":"+self.fill(second)
 
     def http_get(self, url):
         _, _, host, path = url.split("/", 3)
@@ -55,8 +58,7 @@ class Haifoss:
         s.settimeout(1)
         try:
             s.connect(addr)
-        except OSError as e:
-            print("Error: {}".format(e))
+        except OSError:
             return
 
         s.send(bytes("GET /%s HTTP/1.0\r\nHost: %s\r\n\r\n" % (path, host), "utf8"))
@@ -86,8 +88,7 @@ class Haifoss:
             print("Fetching data")
             try:
                 data = s.recv(1024)
-            except OSError as e:
-                print(e)
+            except OSError:
                 break
 
             if data:
@@ -145,7 +146,7 @@ class Haifoss:
         self.draw_tabs()
         self.draw_statusbar()
 
-        self.draw_grid()
+        # self.draw_grid()
         self.display.display()
 
     def draw_tabs(self):
@@ -153,6 +154,7 @@ class Haifoss:
             self.display.drawRect(x, 0, self.tab_width, self.tab_height, self.display.BLACK)
 
     def draw_statusbar(self):
+        self.display.drawFastHLine(0, self.display.height() - 15, self.display.width(), self.display.BLACK)
         last_line_y = self.display.height() - 12
         self.display.printText(10, last_line_y, "IP: {}".format(self.ip))
         self.display.printText(
@@ -179,15 +181,17 @@ class Haifoss:
         ip, netmask, gateway, dns = sta_if.ifconfig()
         self.ip = ip
 
-        # TODO: this can time out
-        ntptime.settime()
+        try:
+            ntptime.settime()
+        except OSError:
+            pass
 
     def loop(self):
-        self.display.clearDisplay()
-        self.init_screen()
 
         while True:
             self.connect_wifi()
+
+            self.init_screen()
 
             self.get_pictures()
 
@@ -195,22 +199,16 @@ class Haifoss:
 
             print("Sleeping...")
 
-            time.sleep(60)
-
-        # TODO: regularly do full refresh
-        '''
-
-        start_display = time.time()
-        self.display.display()
-        end_diplay = time.time()
-
-        print("Display took {}s".format(end_diplay - start_display))
-        '''
+            time.sleep(300)
 
 
 def main():
-    haifoss = Haifoss()
-    haifoss.loop()
+    try:
+        haifoss = Haifoss()
+        haifoss.loop()
+    except Exception as e:
+        print("An exception occured: {}".format(e))
+        sys.print_exception(e)
 
 
 if __name__ == "__main__":
