@@ -25,7 +25,8 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Convert a file (default filename is `tab1.bmp`):
+Convert a file (default filename is `tab1.bmp`). It should be a file with the resolution of 825 x 1136 pixels (or smaller).
+
 ```Bash
 ./convert.py
 ```
@@ -35,12 +36,6 @@ Configure a webserver (e.g. Nginx, Apache) to deliver it.
 Adjust the `config.json` from the sample with your Wifi and webserver data.
 
 Copy the needed files to the Inkplate
-
-```Bash
-make copy
-```
-
-or
 
 ```Bash
 python3 ./Inkplate-micropython/pyboard.py --device /dev/ttyUSB0 -f cp config.json screen.py ./Inkplate-micropython/inkplate10.py :
@@ -57,6 +52,32 @@ or
 python3 ./Inkplate-micropython/pyboard.py --device /dev/ttyUSB0 screen.py
 ```
 
-## TODO
+If you are happy with the results, you can copy the `boot.py` file to the Inkplate, which will start the script on boot.
 
-* Document autostart
+```Bash
+python3 ./Inkplate-micropython/pyboard.py --device /dev/ttyUSB0 -f cp boot.py :
+```
+
+or
+
+```Bash
+make copy
+```
+
+## Troubleshooting
+
+Reset flash
+
+```Bash
+esptool.py -p /dev/ttyUSB0 erase_flash
+```
+
+Install new firmware
+```Bash
+esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash -z 0x1000 esp32spiram-20210902-v1.17.bin
+```
+
+## Resources
+
+* New firmware: https://micropython.org/download/esp32spiram/
+* InkPlate docs: https://inkplate.readthedocs.io/en/latest/get-started.html#micropython
