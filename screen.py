@@ -53,10 +53,10 @@ class Haifoss:
 
     def http_get(self, url):
         _, _, host, path = url.split("/", 3)
-        addr = socket.getaddrinfo(host, 80)[0][-1]
-        s = socket.socket()
-        s.settimeout(1)
         try:
+            addr = socket.getaddrinfo(host, 80)[0][-1]
+            s = socket.socket()
+            s.settimeout(1)
             s.connect(addr)
         except OSError:
             return
