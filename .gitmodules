@@ -1,6 +1,6 @@
 [submodule "Inkplate-micropython"]
 	path = Inkplate-micropython
 	url = https://github.com/e-radionicacom/Inkplate-micropython.git
-[submodule "kindle-weather-display"]
-	path = kindle-weather-display
+[submodule "make-status-image"]
+	path = make-status-image
 	url = ssh://git@gogs.wasmitnetzen.de:10022/wasMitNetzen/make-status-image.git
